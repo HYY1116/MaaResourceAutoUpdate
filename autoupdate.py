@@ -35,14 +35,19 @@ if first_run():
     repo_url = config["repo_url"]   
     repo_path = config["work_path"] + "/MaaResource"
     progress_bar = tqdm.tqdm(total=100, unit='B', unit_scale=True)
-    git.Repo.clone_from("https://gitee.com/balderdash1/MaaResource.git", repo_path, progress=GitCloneProgress())
+    git.Repo.clone_from(repo_url, repo_path, progress=GitCloneProgress())
     progress_bar.close()
+    src_dir_Resourse = config["work_path"] + "/MaaResource/Resource"
+    src_dir_Cache = config["work_path"] + "/MaaResource/Cache"
+    shutil.copytree(src_dir_Resourse, config["MAA_path"] + "/Resource", dirs_exist_ok=True)   
+    shutil.copytree(src_dir_Cache, config["MAA_path"] + "/Cache", dirs_exist_ok=True)
+    print("Frist update success!") 
     exit()
 else:    
     with open("config.json", "r") as f:
         config = json.load(f)
     repo = git.Repo(config["work_path"] + "/MaaResource")
-    diff = repo.git.diff('origin', 'HEAD~1')
+    diff = repo.git.diff('origin', 'HEAD')
     if diff != "":
         repo.remotes.origin.pull()
         src_dir_Resourse = config["work_path"] + "/MaaResource/Resource"
