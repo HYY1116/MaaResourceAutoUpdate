@@ -3,6 +3,8 @@ import git
 import os
 import json
 import tqdm
+import sys
+from tkinter import messagebox
 
 class GitCloneProgress(git.remote.RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
@@ -27,6 +29,13 @@ def first_run():
         return True
     return False
 
+def move_files(src_dir, dst_dir):
+    src_dir_Resourse = src_dir + "/MaaResource/Resource"
+    src_dir_Cache = src_dir + "/MaaResource/Cache"
+    dst_dir_Resourse = dst_dir + "/Resource"
+    dst_dir_Cache = dst_dir + "/Cache"
+    shutil.copytree(src_dir_Resourse, dst_dir_Resourse, dirs_exist_ok=True)   
+    shutil.copytree(src_dir_Cache, dst_dir_Cache, dirs_exist_ok=True)
 
 if first_run():
     json_file = os.path.abspath('.') + "/config.json"
@@ -34,14 +43,13 @@ if first_run():
         config = json.load(f)
     repo_url = config["repo_url"]   
     repo_path = config["work_path"] + "/MaaResource"
+
     progress_bar = tqdm.tqdm(total=100, unit='B', unit_scale=True)
     git.Repo.clone_from(repo_url, repo_path, progress=GitCloneProgress())
     progress_bar.close()
-    src_dir_Resourse = config["work_path"] + "/MaaResource/Resource"
-    src_dir_Cache = config["work_path"] + "/MaaResource/Cache"
-    shutil.copytree(src_dir_Resourse, config["MAA_path"] + "/Resource", dirs_exist_ok=True)   
-    shutil.copytree(src_dir_Cache, config["MAA_path"] + "/Cache", dirs_exist_ok=True)
-    print("Frist update success!") 
+
+    move_files(config["work_path"], config["MAA_path"])
+    messagebox.showinfo("提示","Frist update success!\n") 
     exit()
 else:    
     with open("config.json", "r") as f:
@@ -50,10 +58,7 @@ else:
     diff = repo.git.diff('origin', 'HEAD')
     if diff != "":
         repo.remotes.origin.pull()
-        src_dir_Resourse = config["work_path"] + "/MaaResource/Resource"
-        src_dir_Cache = config["work_path"] + "/MaaResource/Cache"
-        shutil.copytree(src_dir_Resourse, config["MAA_path"] + "/Resource", dirs_exist_ok=True)   
-        shutil.copytree(src_dir_Cache, config["MAA_path"] + "/Cache", dirs_exist_ok=True) 
-        print("Auto update success!")
+        move_files(config["work_path"], config["MAA_path"])
+        messagebox.showinfo("提示","Auto update success!")
     else:
-        print("No update needed!")
+        messagebox.showinfo("提示","No update needed!")
