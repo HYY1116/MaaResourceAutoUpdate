@@ -20,7 +20,7 @@ def first_run():
             maa_path = os.path.abspath('.') 
         work_path = os.path.abspath('.')
         config = {
-            "repo_url": "https://gitee.com/balderdash1/MaaResource.git",
+            "repo_url": " https://gitee.com/HYYBUTH/MaaResource.git",
             "MAA_path": maa_path,
             "work_path": work_path
         }
