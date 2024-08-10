@@ -5,6 +5,7 @@ import json
 import tqdm
 import sys
 from tkinter import messagebox
+from win10toast import ToastNotifier
 
 class GitCloneProgress(git.remote.RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
@@ -37,6 +38,8 @@ def move_files(src_dir, dst_dir):
     shutil.copytree(src_dir_Resourse, dst_dir_Resourse, dirs_exist_ok=True)   
     shutil.copytree(src_dir_Cache, dst_dir_Cache, dirs_exist_ok=True)
 
+toaster = ToastNotifier()
+
 if first_run():
     json_file = os.path.abspath('.') + "/config.json"
     with open(json_file, "r") as f:
@@ -49,7 +52,7 @@ if first_run():
     progress_bar.close()
 
     move_files(config["work_path"], config["MAA_path"])
-    messagebox.showinfo("提示","Frist update success!\n") 
+    toaster.show_toast("资源更新", "首次更新成功！", duration=5)
     exit()
 else:    
     with open("config.json", "r") as f:
@@ -59,6 +62,6 @@ else:
     if diff != "":
         repo.remotes.origin.pull()
         move_files(config["work_path"], config["MAA_path"])
-        messagebox.showinfo("提示","Auto update success!")
+        toaster.show_toast("资源更新", "资源更新成功！", duration=5)
     else:
-        messagebox.showinfo("提示","No update needed!")
+        toaster.show_toast("资源更新", "资源无需更新！", duration=5)
