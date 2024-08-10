@@ -4,7 +4,6 @@ import os
 import json
 import tqdm
 import sys
-from tkinter import messagebox
 from win10toast import ToastNotifier
 
 class GitCloneProgress(git.remote.RemoteProgress):
