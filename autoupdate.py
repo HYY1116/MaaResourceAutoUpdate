@@ -55,9 +55,6 @@ else:
         config = json.load(f)
     repo = git.Repo(config["work_path"] + "/MaaResource")
     diff = repo.git.diff('origin', 'HEAD')
-    if diff != "":
-        repo.remotes.origin.pull()
-        move_files(config["work_path"], config["MAA_path"])
-        toast("资源更新", "资源更新成功！")
-    else:
-        toast("资源更新", "资源无需更新！")
+    repo.remotes.origin.pull()
+    move_files(config["work_path"], config["MAA_path"])
+    toast("资源更新", "资源更新成功！")
